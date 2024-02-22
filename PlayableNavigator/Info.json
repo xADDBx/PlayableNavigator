@@ -1,0 +1,12 @@
+﻿{
+  "Id": "PlayableNavigator",
+  "DisplayName": "Playable Navigator",
+  "Author": "ADDB",
+  "Version": "1.0.0",
+  "ManagerVersion": "0.25.0",
+  "Requirements": [],
+  "AssemblyName": "PlayableNavigator.dll",
+  "EntryMethod": "PlayableNavigator.Main.Load",
+  "HomePage": "",
+  "Repository": ""
+}
