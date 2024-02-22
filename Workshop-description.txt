@@ -1,5 +1,5 @@
 [h1]Playable Navigator[/h1]
-Makes the Naviagor Origin pickeable for your Rogue Trader at Game Start.
+Makes the Navigator Origin pickeable for your Rogue Trader at Game Start.
 This might also enable you to recruit multiple Navigator mercenaries.
 
 [h2]Usage[/h2]
