@@ -29,6 +29,9 @@ using Kingmaker.UnitLogic.Levelup.Selections.Doll;
 using Kingmaker.Visual.CharacterSystem;
 using UnityEngine.TextCore.Text;
 using Kingmaker.Mechanics.Entities;
+using Kingmaker.Code.UI.MVVM.VM.GroupChanger;
+using static UnityModManagerNet.UnityModManager;
+using Kingmaker.Blueprints.Root.Strings;
 
 namespace PlayableNavigator;
 
@@ -38,20 +41,27 @@ namespace PlayableNavigator;
 public static class Main {
     internal static Harmony HarmonyInstance;
     internal static UnityModManager.ModEntry.ModLogger log;
+    public static Settings settings;
     public static bool Load(UnityModManager.ModEntry modEntry) {
         log = modEntry.Logger;
 #if DEBUG
         modEntry.OnUnload = OnUnload;
 #endif
         modEntry.OnGUI = OnGUI;
+        modEntry.OnSaveGUI = OnSaveGUI;
+        settings = Settings.Load<Settings>(modEntry);
         HarmonyInstance = new Harmony(modEntry.Info.Id);
         HarmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
         return true;
+    }
+    static void OnSaveGUI(ModEntry modEntry) {
+        settings.Save(modEntry);
     }
     internal static bool createNavigator = false;
     public static void OnGUI(UnityModManager.ModEntry modEntry) {
         GUILayout.Label("Should the next character creation be a Navigator?");
         createNavigator = GUILayout.Toggle(createNavigator, "Create Navigator");
+        settings.enableMoreThanOneNavigatorInParty = GUILayout.Toggle(settings.enableMoreThanOneNavigatorInParty, "Allow more than one Navigator in a Party", GUILayout.ExpandWidth(false));
     }
 
 #if DEBUG
@@ -181,6 +191,21 @@ public static class Main {
             if (EntityPartStorage.perSave.AddClothes.TryGetValue(context.UniqueId, out var id)) {
                 if (!__instance.EquipmentEntityIds.Contains(id)) __instance.EquipmentEntityIds.Add(id);
             }
+        }
+    }
+    [HarmonyPatch(typeof(GroupChangerVM), nameof(GroupChangerVM.CanMoveCharacterFromRemoteToParty))]
+    internal static class GroupChangerVM_CanMoveCharacterFromRemoteToParty_Patch {
+        [HarmonyPrefix]
+        private static bool CanMoveCharacterFromRemoteToParty(GroupChangerVM __instance, ref string __result) {
+            if (settings.enableMoreThanOneNavigatorInParty) {
+                if (__instance.m_PartyCharacter.Count == 6) {
+                    __result = UIStrings.Instance.GroupChangerTexts.MaxGroupCountWarning;
+                    return false;
+                }
+                __result = null;
+                return false;
+            }
+            return true;
         }
     }
 }

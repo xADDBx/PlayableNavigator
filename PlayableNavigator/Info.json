@@ -2,11 +2,11 @@
   "Id": "PlayableNavigator",
   "DisplayName": "Playable Navigator",
   "Author": "ADDB",
-  "Version": "1.0.0",
+  "Version": "1.0.1",
   "ManagerVersion": "0.25.0",
   "Requirements": [],
   "AssemblyName": "PlayableNavigator.dll",
   "EntryMethod": "PlayableNavigator.Main.Load",
-  "HomePage": "",
-  "Repository": ""
+  "HomePage": "https://www.nexusmods.com/warhammer40kroguetrader/mods/106",
+  "Repository": "https://raw.githubusercontent.com/xADDBx/PlayableNavigator/master/Repository.json"
 }
