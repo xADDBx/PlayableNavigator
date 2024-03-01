@@ -27,11 +27,11 @@ using Kingmaker.UnitLogic.Parts;
 using Kingmaker.ResourceLinks;
 using Kingmaker.UnitLogic.Levelup.Selections.Doll;
 using Kingmaker.Visual.CharacterSystem;
-using UnityEngine.TextCore.Text;
 using Kingmaker.Mechanics.Entities;
 using Kingmaker.Code.UI.MVVM.VM.GroupChanger;
 using static UnityModManagerNet.UnityModManager;
 using Kingmaker.Blueprints.Root.Strings;
+using Kingmaker.View;
 
 namespace PlayableNavigator;
 
@@ -186,10 +186,14 @@ public static class Main {
     [HarmonyPatch(typeof(DollData), nameof(DollData.CreateUnitView))]
     internal static class DollData_CreateUnitView_Patch {
         internal static AbstractUnitEntity context = null;
-        [HarmonyPrefix]
-        private static void CreateUnitView(DollData __instance) {
+        [HarmonyPostfix]
+        private static void CreateUnitView(DollData __instance, ref UnitEntityView __result, bool savedEquipment) {
             if (EntityPartStorage.perSave.AddClothes.TryGetValue(context.UniqueId, out var id)) {
-                if (!__instance.EquipmentEntityIds.Contains(id)) __instance.EquipmentEntityIds.Add(id);
+                Character component2 = __result.GetComponent<Character>();
+                var eel = new EquipmentEntityLink() { AssetId = id };
+                var ee = eel.Load();
+                component2.AddEquipmentEntity(ee, savedEquipment);
+                __instance.ApplyRampIndices(component2, savedEquipment);
             }
         }
     }
